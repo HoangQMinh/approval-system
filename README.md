@@ -2,7 +2,7 @@
 
 ## Tổng quan
 
-Hệ thống xét duyệt đơn nghỉ phép, chi phí của nhân viên lên cấp trên.
+Hệ thống xét duyệt đơn nghỉ phép, chi phí của nhân viên lên cấp trên phê duyệt, xử lý.
 
 ## Yêu cầu môi trường
 
@@ -13,9 +13,7 @@ Python 3.12+
 ```cmd
 git clone https://github.com/HoangQMinh/approval-system.git
 cd approval-system
-git switch -c feature/SETUP-001
 py -3.12 -m venv .venv
 .venv\Scripts\activate
-pip install flask pytest
-pip show flask pytest
+pip install -r requirements-dev.txt
 ```

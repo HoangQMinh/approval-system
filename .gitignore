@@ -13,3 +13,6 @@ __pycache__/
 .env
 instance/
 
+# Editor
+
+.vscode/
