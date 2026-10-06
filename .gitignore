@@ -1,0 +1,15 @@
+# Môi trường
+
+.venv/
+__pycache__/
+
+# Python
+
+*.pyc
+.pytest_cache/
+
+# Bí mật
+
+.env
+instance/
+
