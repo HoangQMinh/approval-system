@@ -17,3 +17,23 @@ py -3.12 -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements-dev.txt
 ```
+
+## Chạy ứng dụng
+
+**CMD 1 — Khởi động server:**
+
+```cmd
+flask --app app run --debug
+```
+
+**CMD 2 — Mở một CMD khác để gọi API:**
+
+```cmd
+curl -i http://127.0.0.1:5000/health
+```
+
+## Chạy test
+
+```cmd
+pytest -v
+```
