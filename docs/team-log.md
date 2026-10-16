@@ -7,16 +7,16 @@
 - **Sprint**: Sprint 0 (Setup) — bắt đầu 2026-10-06
 - **Ticket đang làm**: — (SETUP-001 ✅ Done, PR #1 squash merge → `be464e7`)
 - **Team**: Dev A = Minh (folder `approval-system`) · Dev B = Minh (folder `approval-system-devb`) · TL/PM/QA/Ops = AI
-- **Tiến độ Sprint 0**: SETUP-001 ✅ · SETUP-003 🟡 Dev A · SETUP-004 🟡 Dev B · SETUP-002 ⚪ · Thứ tự merge: 004 → 003 (D-018)
-- **Việc tiếp theo**: Dev A commit team-log + push + mở PR (ghi chờ 004, KHÔNG merge) · Dev B bắt đầu SETUP-004 (chưa có commit nào) · Sau khi 004 merge: Dev A merge main → pip install → ruff fix/format → mypy (dự báo lỗi `Any | None` ở test_errors.py:29) · Minh còn nợ: 実績 SETUP-001, 質問票
+- **Tiến độ Sprint 0**: SETUP-001 ✅ · SETUP-004 ✅ · SETUP-003 🟡 Dev A (merge main) · SETUP-002 ⚪
+- **Việc tiếp theo**: Dev A: commit team-log → `git fetch` + `git merge origin/main` → giải conflict README → pip install → ruff format + sửa mypy → push → Ready for review · Minh còn nợ: 実績 SETUP-001/003/004, 質問票
 
 ## Ticket
 | ID | Tiêu đề | Người làm | Trạng thái | 見積 (SP / giờ) | 実績 (giờ) | Ghi chú |
 |----|---------|-----------|------------|----------------|-----------|---------|
 | SETUP-001 | Dựng khung dự án: app factory, health_bp, GET /health, test, .gitignore, README | Minh | ✅ Done (2026-10-10) | 2 SP / 4h (TL ước cho người quen tay) | chờ Minh báo | PR #1, squash `be464e7` |
 | SETUP-002 | Kết nối PostgreSQL (config theo env, docker-compose) | — | ⚪ Backlog | — | — | Mở sau khi SETUP-001 merge |
-| SETUP-003 | Error handler trả JSON cho 404/405/500 (hiện Flask trả HTML) | Dev A | 🟠 Code approved, chờ SETUP-004 merge (D-018) | 2 SP / ~6h | — | Phát hiện khi review Bước 3 SETUP-001 |
-| SETUP-004 | Đưa ruff + mypy vào requirements-dev, cấu hình trong pyproject, hướng dẫn chạy trong README | Dev B | 🟡 In Progress (2026-10-13) | 2 SP / ~5h | — | Minh hỏi vì sao TL thấy lỗi mà máy Minh không thấy |
+| SETUP-003 | Error handler trả JSON cho 404/405/500 (hiện Flask trả HTML) | Dev A | 🟡 PR #2 (Draft) — đang merge main, giải quyết conflict | 2 SP / ~6h | — | Phát hiện khi review Bước 3 SETUP-001 |
+| SETUP-004 | Đưa ruff + mypy vào requirements-dev, cấu hình trong pyproject, hướng dẫn chạy trong README (PR #3, squash `dbea3b8`) | Dev B | ✅ Done (2026-10-17) | 2 SP / ~5h | — | Minh hỏi vì sao TL thấy lỗi mà máy Minh không thấy |
 
 ## Quyết định kỹ thuật của TL (ADR-lite)
 | # | Quyết định | Lý do |
@@ -93,3 +93,9 @@ Ghi chú cho retro — rút ra từ SETUP-001:
 - 2026-10-15: Review SETUP-003 (Dev A) lần 1, trước commit: 5 passed, mypy sạch, mutation "lộ str(error)" → test đỏ ✅, log có traceback ✅. Cần sửa: tên lỗi 500 `INTERNAL_SERVER_ERROR` lệch D-017 (404 dùng "Not Found") — test 500 không kiểm field `error` nên lọt; dòng 106 ký tự (E501 sau SETUP-004); docstring `create_app` chưa nhắc error handler; README mục lỗi chưa có ví dụ/code block.
 - 2026-10-15: Review SETUP-003 lần 2 (`80fe767`, chưa push): README mục lỗi rất tốt. Còn: field `error` của 500 thành "Unhandled exception" (lẫn log message với tên lỗi HTTP; README ghi "Internal Server Error" → code và README mâu thuẫn); docstring `create_app` bị xóa thay vì sửa. Định dạng còn lại để `ruff format` xử lý sau khi merge 004.
 - 2026-10-15: Review SETUP-003 lần 3 (`84f50c4`): ✅ code approve — 500 trả "Internal Server Error" khớp D-017 + README, docstring khôi phục và cập nhật đúng. Dự báo sau khi merge 004: format + mypy `test_errors.py:29` (json có thể None). Dev B chưa bắt đầu → PR 003 phải chờ (bị chặn bởi phụ thuộc).
+- 2026-10-15: PR #2 (Draft) mô tả đạt: title có mã ticket, dòng chờ merge, 500 ghi nhận bằng test, 対象外 theo mã ticket. Nit: 2 dòng 対象外 thiếu `- ` nên hiển thị dính 1 dòng.
+- 2026-10-16: Dev B: pin ruff==0.17.1, mypy==2.4.0; commit cấu hình `7b0adf5`; đã chạy `ruff check --fix` + `ruff format` → diff thuần máy móc (3 file), cả 3 tool sạch. Quy tắc trả lời Minh: lỗi có `[*]` → để tool sửa; ruff không `[*]` và mypy → sửa tay.
+- 2026-10-16: Dev B commit auto-fix `763b9f1` (thuần máy móc, pytest 2 passed). README review lần 1: thiếu dòng D-020 ở mục Cài đặt; mục "Kiểm tra code" ghi sai thời điểm chạy ("sau khi đổi cấu hình" thay vì "trước khi mở PR"); thêm ghi chú mypy phải sửa tay. Điểm cộng: tự thêm phần quy trình sửa (fix → diff → pytest).
+- 2026-10-17: README SETUP-004 review lần 2: ✅ approve — có mục con "Cập nhật dependencies" (D-020), thời điểm chạy "trước khi mở PR", giải thích từng lệnh, ghi chú mypy sửa tay. Nit: câu mypy nên đặt trong phần sửa lỗi thay vì cuối file.
+- 2026-10-17: Review PR #3 (SETUP-004, `6f49cff`, mergeable clean): code ✅. Mô tả PR cần sửa: 概要 ghi nhầm SETUP-003 (copy-paste), thiếu mục 影響範囲 (bắt buộc — PR đổi môi trường cả team), 変更内容 không nhắc 3 file code bị auto-fix, 対象外 "ない" → 「なし」.
+- 2026-10-17: PR #3 squash merge (`dbea3b8`), mô tả đã sửa đủ (影響範囲, レビュー観点 D-009). Dev B dọn branch + cài lại requirements OK. TL chạy thử merge main vào SETUP-003 trên bản clone riêng: conflict DUY NHẤT ở README (2 mục mới cùng thêm cuối file); `app/__init__.py` Git tự merge (đúng logic, thiếu 1 dòng trống); sau merge: 5 passed, ruff check sạch, format 2 file, mypy `test_errors.py:29`.
