@@ -26,7 +26,10 @@ def test_unexpected_error_returns_json_500_without_detail(app: Flask):
 
     assert response.status_code == 500
     assert response.is_json
-    assert response.json["error"] == "Internal Server Error"
+    data = response.json
+
+    assert data is not None
+    assert data["error"] == "Internal Server Error"
 
     body = response.get_data(as_text=True)
     assert "secret-db-password" not in body
