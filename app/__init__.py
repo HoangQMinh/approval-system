@@ -22,6 +22,7 @@ def create_app(test_config: dict | None = None) -> Flask:
     app.register_blueprint(health_bp)
 
     from app.errors import register_error_handlers
+
     register_error_handlers(app)
 
     return app
