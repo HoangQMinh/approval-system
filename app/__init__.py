@@ -1,4 +1,5 @@
 """Application package - chứa app factory."""
+
 from flask import Flask
 
 
@@ -16,6 +17,7 @@ def create_app(test_config: dict | None = None) -> Flask:
         app.config.update(test_config)
 
     from app.routes.health import health_bp
+
     app.register_blueprint(health_bp)
 
     return app
