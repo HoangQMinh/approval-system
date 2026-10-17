@@ -7,15 +7,15 @@
 - **Sprint**: Sprint 0 (Setup) — bắt đầu 2026-10-06
 - **Ticket đang làm**: — (SETUP-001 ✅ Done, PR #1 squash merge → `be464e7`)
 - **Team**: Dev A = Minh (folder `approval-system`) · Dev B = Minh (folder `approval-system-devb`) · TL/PM/QA/Ops = AI
-- **Tiến độ Sprint 0**: SETUP-001 ✅ · SETUP-004 ✅ · SETUP-003 🟡 Dev A (merge main) · SETUP-002 ⚪
-- **Việc tiếp theo**: Dev A: commit team-log → `git fetch` + `git merge origin/main` → giải conflict README → pip install → ruff format + sửa mypy → push → Ready for review · Minh còn nợ: 実績 SETUP-001/003/004, 質問票
+- **Tiến độ Sprint 0**: SETUP-001 ✅ · SETUP-004 ✅ · SETUP-003 🟢 approved, chờ merge · SETUP-002 ⚪ (kế tiếp)
+- **Việc tiếp theo**: Dev A commit+push team-log → sửa 2 nit PR body → squash merge #2 → dọn branch; cả 2 clone pull main · TL giao SETUP-002 · Minh còn nợ: 実績 SETUP-001/003/004, 質問票
 
 ## Ticket
 | ID | Tiêu đề | Người làm | Trạng thái | 見積 (SP / giờ) | 実績 (giờ) | Ghi chú |
 |----|---------|-----------|------------|----------------|-----------|---------|
 | SETUP-001 | Dựng khung dự án: app factory, health_bp, GET /health, test, .gitignore, README | Minh | ✅ Done (2026-10-10) | 2 SP / 4h (TL ước cho người quen tay) | chờ Minh báo | PR #1, squash `be464e7` |
 | SETUP-002 | Kết nối PostgreSQL (config theo env, docker-compose) | — | ⚪ Backlog | — | — | Mở sau khi SETUP-001 merge |
-| SETUP-003 | Error handler trả JSON cho 404/405/500 (hiện Flask trả HTML) | Dev A | 🟡 PR #2 (Draft) — đang merge main, giải quyết conflict | 2 SP / ~6h | — | Phát hiện khi review Bước 3 SETUP-001 |
+| SETUP-003 | Error handler trả JSON cho 404/405/500 (hiện Flask trả HTML) | Dev A | 🟢 PR #2 final approve (2026-10-17) — chờ merge | 2 SP / ~6h | — | Phát hiện khi review Bước 3 SETUP-001 |
 | SETUP-004 | Đưa ruff + mypy vào requirements-dev, cấu hình trong pyproject, hướng dẫn chạy trong README (PR #3, squash `dbea3b8`) | Dev B | ✅ Done (2026-10-17) | 2 SP / ~5h | — | Minh hỏi vì sao TL thấy lỗi mà máy Minh không thấy |
 
 ## Quyết định kỹ thuật của TL (ADR-lite)
@@ -55,6 +55,7 @@
 ## Bug / Sự cố
 | Ngày | Mô tả | Nguyên nhân | Xử lý | Bài học |
 |------|-------|-------------|-------|---------|
+| 2026-10-17 | (Ghi nhận, không phải lỗi) Merge `origin/main` vào SETUP-003: conflict ở README | 2 ticket song song cùng thêm mục cuối README — TL đã dự đoán (D-018) | Giữ cả 2 mục, sắp theo thứ tự quy trình dev → tham chiếu API; commit merge chỉ chứa merge | Conflict tài liệu dễ; luôn đọc lại file Git tự merge; commit merge không lẫn sửa khác |
 | 2026-10-12 | Clone Dev A có thêm `app/pytest.ini` (untracked, giống hệt bản ở root, tạo 10-10) | `pytest.ini` bị kéo nhầm từ root vào `app/` (ngày 10-10), rồi root được `git restore` | `del app\pytest.ini` | File untracked lạ = dấu hiệu thao tác nhầm; `git add .` sẽ gom luôn |
 | 2026-10-12 | Clone Dev A: `pytest` lỗi `No module named 'app'` | `pytest.ini` bị xóa ngoài ý muốn (`git status` báo `D pytest.ini`) | `git restore pytest.ini` | Đầu mỗi ticket chạy `git status`: working tree chỉ được chứa thay đổi mình chủ ý |
 | 2026-10-06 | `git clone ... .` lỗi "not an empty directory" | App tự đồng bộ folder `Claude outputs` vào thư mục dự án | TL xóa folder, clone lại OK | Clone vào `.` cần folder trống; kiểm tra bằng `dir /a` |
@@ -99,3 +100,4 @@ Ghi chú cho retro — rút ra từ SETUP-001:
 - 2026-10-17: README SETUP-004 review lần 2: ✅ approve — có mục con "Cập nhật dependencies" (D-020), thời điểm chạy "trước khi mở PR", giải thích từng lệnh, ghi chú mypy sửa tay. Nit: câu mypy nên đặt trong phần sửa lỗi thay vì cuối file.
 - 2026-10-17: Review PR #3 (SETUP-004, `6f49cff`, mergeable clean): code ✅. Mô tả PR cần sửa: 概要 ghi nhầm SETUP-003 (copy-paste), thiếu mục 影響範囲 (bắt buộc — PR đổi môi trường cả team), 変更内容 không nhắc 3 file code bị auto-fix, 対象外 "ない" → 「なし」.
 - 2026-10-17: PR #3 squash merge (`dbea3b8`), mô tả đã sửa đủ (影響範囲, レビュー観点 D-009). Dev B dọn branch + cài lại requirements OK. TL chạy thử merge main vào SETUP-003 trên bản clone riêng: conflict DUY NHẤT ở README (2 mục mới cùng thêm cuối file); `app/__init__.py` Git tự merge (đúng logic, thiếu 1 dòng trống); sau merge: 5 passed, ruff check sạch, format 2 file, mypy `test_errors.py:29`.
+- 2026-10-17: Review lại PR #2 sau merge main (`bc76dbf`): commit tách đúng (merge `eb6cc7c` / format `1fc2af0` / mypy `bc76dbf`), sửa mypy bằng `assert data is not None` ✅, 5 passed, ruff+format+mypy sạch, PR mergeable clean, diff PR chỉ còn 5 file của Dev A. ✅ Final approve. Nit PR body: 2 checkbox chưa tick, 対象外 còn ghi SETUP-004 "đang làm" (đã xong).
