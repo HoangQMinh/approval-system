@@ -28,6 +28,51 @@ pip install -r requirements-dev.txt
 
 Thực hiện bước này trước khi chạy ứng dụng hoặc các lệnh kiểm tra code.
 
+## Khởi động DB
+
+### 1. Chuẩn bị
+
+- Mở Docker Desktop và đợi Docker khởi động hoàn tất.
+- Tại thư mục gốc của project, tạo file `.env` từ `.env.example` (chỉ cần thực hiện lần đầu).
+
+```cmd
+copy .env.example .env
+```
+
+### 2. Khởi động PostgreSQL
+
+```cmd
+docker compose up -d
+```
+
+### 3. Kiểm tra trạng thái
+
+```cmd
+docker compose ps
+```
+
+Đợi container `db` có trạng thái `Up` và health check chuyển sang `healthy`.
+
+Có thể kiểm tra kết nối database bằng lệnh:
+
+```cmd
+docker compose exec db psql -U approval -d approval -c "SELECT 1"
+```
+
+Nếu thành công, kết quả truy vấn sẽ trả về `1`.
+
+### 4. Dừng DB
+
+Khi không cần sử dụng database nữa:
+
+```cmd
+docker compose down
+```
+
+Lệnh này dừng và xóa container/network do Compose quản lý, nhưng **giữ lại dữ liệu trong named volume**.
+
+**Lưu ý:** Không chạy `docker compose down -v` trừ khi muốn xóa cả volume chứa dữ liệu PostgreSQL. Dữ liệu database sẽ bị mất.
+
 ## Chạy ứng dụng
 
 **CMD 1 — Khởi động server:**

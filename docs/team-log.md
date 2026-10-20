@@ -5,17 +5,18 @@
 
 ## Trạng thái hiện tại
 - **Sprint**: Sprint 0 (Setup) — bắt đầu 2026-10-06
-- **Ticket đang làm**: — (SETUP-001 ✅ Done, PR #1 squash merge → `be464e7`)
+- **Ticket đang làm**: — (chờ 質問票 + SETUP-002)
 - **Team**: Dev A = Minh (folder `approval-system`) · Dev B = Minh (folder `approval-system-devb`) · TL/PM/QA/Ops = AI
-- **Tiến độ Sprint 0**: SETUP-001 ✅ · SETUP-004 ✅ · SETUP-003 🟢 approved, chờ merge · SETUP-002 ⚪ (kế tiếp)
-- **Việc tiếp theo**: Dev A commit+push team-log → sửa 2 nit PR body → squash merge #2 → dọn branch; cả 2 clone pull main · TL giao SETUP-002 · Minh còn nợ: 実績 SETUP-001/003/004, 質問票
+- **Tiến độ Sprint 0**: SETUP-001 ✅ · SETUP-004 ✅ · SETUP-003 ✅ · SETUP-002 🟡 Dev A ‖ SETUP-005 🟡 Dev B · sau đó: release Sprint 0 → QA test → retro
+- **Việc tiếp theo**: Dev A làm SETUP-002 ‖ Dev B làm SETUP-005; 002 merge trước (D-025)
 
 ## Ticket
 | ID | Tiêu đề | Người làm | Trạng thái | 見積 (SP / giờ) | 実績 (giờ) | Ghi chú |
 |----|---------|-----------|------------|----------------|-----------|---------|
-| SETUP-001 | Dựng khung dự án: app factory, health_bp, GET /health, test, .gitignore, README | Minh | ✅ Done (2026-10-10) | 2 SP / 4h (TL ước cho người quen tay) | chờ Minh báo | PR #1, squash `be464e7` |
-| SETUP-002 | Kết nối PostgreSQL (config theo env, docker-compose) | — | ⚪ Backlog | — | — | Mở sau khi SETUP-001 merge |
-| SETUP-003 | Error handler trả JSON cho 404/405/500 (hiện Flask trả HTML) | Dev A | 🟢 PR #2 final approve (2026-10-17) — chờ merge | 2 SP / ~6h | — | Phát hiện khi review Bước 3 SETUP-001 |
+| SETUP-001 | Dựng khung dự án: app factory, health_bp, GET /health, test, .gitignore, README | Minh | ✅ Done (2026-10-10) | 2 SP / 4h (TL ước cho người quen tay) | — | PR #1, squash `be464e7` |
+| SETUP-002 | PostgreSQL 16 bằng docker-compose + config đọc từ biến môi trường (`DATABASE_URL`, `.env.example`) | Dev A | 🟡 In Progress (2026-10-18) | 3 SP / ~8h | — | Mở sau khi SETUP-001 merge |
+| SETUP-005 | Kết nối DB bằng SQLAlchemy (`app/db.py`) + `/health` kiểm tra DB (DB chết → 503) + test | Dev B | 🟡 In Progress (2026-10-18) | 3 SP / ~8h | — | Tách từ SETUP-002; làm song song nhờ hợp đồng D-024 |
+| SETUP-003 | Error handler trả JSON cho 404/405/500 (hiện Flask trả HTML) | Dev A | ✅ Done (2026-10-17, PR #2 squash `830a54b`) | 2 SP / ~6h | — | Phát hiện khi review Bước 3 SETUP-001 |
 | SETUP-004 | Đưa ruff + mypy vào requirements-dev, cấu hình trong pyproject, hướng dẫn chạy trong README (PR #3, squash `dbea3b8`) | Dev B | ✅ Done (2026-10-17) | 2 SP / ~5h | — | Minh hỏi vì sao TL thấy lỗi mà máy Minh không thấy |
 
 ## Quyết định kỹ thuật của TL (ADR-lite)
@@ -36,11 +37,17 @@
 | D-013 | GitHub: bật ruleset cho `main` (bắt buộc PR, cấm push thẳng/force push), chỉ cho Squash merge, tự xóa branch sau merge | Chặn lỗi người từ 2 clone; giữ D-006 bằng công cụ thay vì trí nhớ |
 | D-014 | Minh học vai TL bằng **quan sát**: mỗi tin của TL có mục **🎓 Góc TL** (TL vừa làm gì, vì sao, có lựa chọn nào khác). TL-AI làm toàn bộ việc TL; không giao bài tập/việc TL cho Minh | Minh muốn biết TL cần làm gì, chưa muốn đảm nhận |
 | D-015 | Cỡ ticket: 1 ticket = 1 mục đích = 1 PR; làm ≤ 1–2 ngày; PR review được trong ~15–30 phút (thường < 200–300 dòng thay đổi); quá cỡ thì TL tách. Ticket cho Minh chia 2–3 bước | Minh thấy SETUP-001 nặng; ticket nhỏ → review nhanh, ít conflict |
-| D-016 | Ước lượng: TL ước mỗi ticket bằng Story Point (1,2,3,5,8 — độ lớn tương đối) + quy ra giờ cho người làm; dev báo 実績 giờ khi xong; sau vài ticket dùng tỉ lệ 実績/見積 để ước chính xác hơn | Không có chuẩn chung toàn ngành; ước lượng tốt dựa trên dữ liệu thực tế của chính team |
+| D-016 | Ước lượng: TL ước mỗi ticket bằng Story Point (1,2,3,5,8) + quy ra giờ. Minh **không báo 実績** (Minh chọn bỏ qua, 2026-10-17) → cột 実績 để trống | Không có chuẩn chung; Minh chỉ cần hiểu cách TL ước lượng |
 | D-017 | Định dạng lỗi API: body `{"error": <tên lỗi HTTP>, "message": <mô tả>}` + status code tương ứng; lỗi 500 không bao giờ trả chi tiết exception ra ngoài, chi tiết chỉ ghi log | Client xử lý lỗi thống nhất; không lộ thông tin nội bộ |
 | D-018 | Thứ tự merge Sprint 0: SETUP-004 (công cụ) merge TRƯỚC, SETUP-003 SAU. Dev A được mở PR sớm dưới dạng **Draft** (GitHub khóa nút merge) và chờ 004 merge, rồi `git merge origin/main`, chạy ruff/mypy, sửa, push lại | Công cụ chất lượng là nền: code mới phải qua công cụ trước khi vào main |
 | D-019 | Thay đổi máy móc (auto-fix/format của tool) để ở commit riêng, message bắt đầu bằng `[TICKET] Apply ruff ...` | Reviewer lướt nhanh commit máy móc, tập trung commit có logic |
 | D-020 | `requirements*.txt` là nguồn sự thật của môi trường: không ai `pip install` lẻ thư viện ngoài file; khi `main` đổi requirements, mọi dev chạy lại `pip install -r requirements-dev.txt` sau khi pull/merge | Môi trường các dev luôn giống nhau, không "máy em chạy được" |
+| D-021 | 質問票 với khách do TL (kiêm BrSE) phụ trách; dev chỉ tham gia ở bước **refinement**: đọc ticket/spec và hỏi TL chỗ chưa rõ, không hỏi khách trực tiếp. Q&A lưu ở `docs/qa/`, commit cùng ticket đầu tiên của sprint (chỉ từ clone Dev A) | Minh nêu: dev chủ yếu code theo spec đã thống nhất; đúng với vai intern |
+| D-022 | Tài liệu thiết kế nhẹ trong repo: `docs/design/` (状態遷移, テーブル定義, API一覧) do TL viết trước Sprint 1 planning; mỗi ticket **link** tới mục liên quan (design, `docs/qa/`, D-xxx). Dev trước khi code: đọc ticket → mở các link → đọc code hiện có ở chỗ sẽ sửa → hỏi TL nếu chưa rõ | Ticket chỉ nói "làm gì"; thiết kế nói "vì sao / toàn cảnh"; dev cần cả hai |
+| D-023 | Truy cập DB: **SQLAlchemy 2.0** (không dùng Flask-SQLAlchemy) + driver **psycopg 3**; PostgreSQL 16 chạy bằng docker-compose (chỉ môi trường dev); migration bằng Alembic ở ticket sau; cấu hình qua biến môi trường, file `.env` (không commit) + `.env.example` (commit) | ORM chuẩn ngành, session tường minh → học transaction; Alembic là chuẩn migration; bí mật không vào Git |
+| D-024 | **Hợp đồng giữa SETUP-002 và SETUP-005**: config key `DATABASE_URL` (dạng `postgresql+psycopg://user:pass@host:port/db`) có trong `app.config`; SETUP-005 chỉ đọc key này, test truyền qua `test_config` | Thống nhất giao diện trước → 2 dev làm song song dù có phụ thuộc |
+| D-025 | Thứ tự merge: SETUP-002 (config/DB) TRƯỚC, SETUP-005 SAU (merge main về, giải conflict). docker-compose đặt `name: approval` cố định để 2 clone dùng chung 1 container/volume; cổng máy **5433** (tránh Postgres khác đang chiếm 5432) | Nền trước; 2 clone trên 1 máy không tranh cổng |
+| D-026 | Test không cần DB thật: dùng `DATABASE_URL=sqlite+pysqlite:///:memory:` trong `test_config` (chỉ cho health `SELECT 1`); case DB chết dùng URL tới cổng đóng `127.0.0.1:1`. Test với PostgreSQL thật quyết định ở Sprint 1 (khi có bảng) | Test nhanh, không phụ thuộc Docker; chiến lược DB test thật để khi có schema |
 
 ## Mức hỗ trợ theo kỹ năng (D-008)
 Đầy đủ → Vừa: xong 1 ticket cùng loại, approve ≤ 2 vòng review, không xin đáp án. Vừa → Nhẹ: thêm 2 ticket cùng loại đạt mức Vừa.
@@ -68,6 +75,7 @@ Ghi chú cho retro — rút ra từ SETUP-001:
 - Sửa theo review bằng trí nhớ → sót điểm. Cách làm: dò lại từng gạch đầu dòng trước khi báo "xong".
 - Gặp lỗi type hint thì xóa type hint → né lỗi chứ không sửa. Cách làm: đọc dòng `got ...` của công cụ.
 - Chép nguyên ví dụ gợi ý → sai kiểu. Ví dụ là để hiểu cấu trúc.
+- **Lặp lại lần 3 (SETUP-002):** code đổi hành vi (`create_app` giờ raise `RuntimeError`) nhưng docstring không cập nhật — dù ticket đã nhắc. Quy tắc: đổi hành vi hàm → sửa docstring cùng lúc (Args/Returns/**Raises**).
 - **Lặp lại lần 2 (SETUP-003):** được yêu cầu *sửa* docstring lỗi thời → *xóa* luôn docstring (giống lần xóa type hint ở SETUP-001). Quy tắc: review nói "sửa X" thì X phải còn và đúng; xóa chỉ khi review nói xóa.
 - Tốt: tự phát hiện README có lệnh vô lý (`git switch`) nhờ chạy thử trên máy sạch; PR body có output thật + 異常系.
 
@@ -101,3 +109,9 @@ Ghi chú cho retro — rút ra từ SETUP-001:
 - 2026-10-17: Review PR #3 (SETUP-004, `6f49cff`, mergeable clean): code ✅. Mô tả PR cần sửa: 概要 ghi nhầm SETUP-003 (copy-paste), thiếu mục 影響範囲 (bắt buộc — PR đổi môi trường cả team), 変更内容 không nhắc 3 file code bị auto-fix, 対象外 "ない" → 「なし」.
 - 2026-10-17: PR #3 squash merge (`dbea3b8`), mô tả đã sửa đủ (影響範囲, レビュー観点 D-009). Dev B dọn branch + cài lại requirements OK. TL chạy thử merge main vào SETUP-003 trên bản clone riêng: conflict DUY NHẤT ở README (2 mục mới cùng thêm cuối file); `app/__init__.py` Git tự merge (đúng logic, thiếu 1 dòng trống); sau merge: 5 passed, ruff check sạch, format 2 file, mypy `test_errors.py:29`.
 - 2026-10-17: Review lại PR #2 sau merge main (`bc76dbf`): commit tách đúng (merge `eb6cc7c` / format `1fc2af0` / mypy `bc76dbf`), sửa mypy bằng `assert data is not None` ✅, 5 passed, ruff+format+mypy sạch, PR mergeable clean, diff PR chỉ còn 5 file của Dev A. ✅ Final approve. Nit PR body: 2 checkbox chưa tick, 対象外 còn ghi SETUP-004 "đang làm" (đã xong).
+- 2026-10-17: PR #2 squash merge `830a54b`. Cả 2 clone `main` = `origin/main` = `830a54b`, sạch. SETUP-003 Done. Minh bỏ qua 実績 (sửa D-016). Bắt đầu 質問票 Sprint 1.
+- 2026-10-17: Minh hỏi dev có phải tìm điểm mơ hồ không → chốt D-021 (TL/BrSE lo 質問票, dev hỏi ở refinement). TL gửi 質問票 16 câu, PM trả lời ngay: đổi 種別 (振替休日 thay 欠勤), mở rộng quá khứ đến hôm trước, backlog: hủy đơn đã duyệt (Sprint 2), quản lý số ngày phép, duyệt thay khi vắng. Lưu `docs/qa/sprint1-qa.md` (untracked, commit cùng ticket Sprint 1 đầu tiên).
+- 2026-10-17: Minh hỏi dev có cần đọc tài liệu thiết kế không → chốt D-022 (docs/design/ + ticket link tài liệu).
+- 2026-10-17: TL lên kế hoạch phần còn lại Sprint 0: tách SETUP-002 thành SETUP-002 (Dev A: docker-compose + config) và SETUP-005 (Dev B: kết nối DB + health), chốt D-023 (SQLAlchemy 2.0 + psycopg 3, Postgres 16 Docker), D-024 (hợp đồng `DATABASE_URL`).
+- 2026-10-18: Docker Desktop OK (lỗi đầu: Engine chưa chạy). TL giao SETUP-002 (Dev A) ‖ SETUP-005 (Dev B). Bản tham chiếu TL: 8 passed, ruff/mypy sạch, SQLAlchemy+psycopg nối thật được PostgreSQL 16, compose file hợp lệ. Dự báo conflict sau khi 002 merge: `app/__init__.py`, `tests/conftest.py` (cả 2 cùng thêm DATABASE_URL) — lần đầu conflict trong CODE.
+- 2026-10-19: Review SETUP-002 (Dev A) trước commit: đã chuyển sang branch `feature/SETUP-002` ✅, `python-dotenv==1.2.2` đã sửa và cài ✅, 7 passed, 4 tool sạch, thứ tự env → test_config → kiểm tra đúng ✅, `.env` bị ignore ✅. Điểm cộng: compose bind `127.0.0.1:5433` (DB không lộ ra LAN). Cần sửa: docstring `create_app` thiếu `Raises`; README mục "Khởi động DB" đặt cuối file (sau tham chiếu API) — phải đứng trước "Chạy ứng dụng".
