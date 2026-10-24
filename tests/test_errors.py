@@ -17,6 +17,10 @@ def test_wrong_method_returns_json_405(client):
 
     assert response.status_code == 405
     assert response.is_json
+    allow = response.headers.get("Allow", "")
+    methods = [method.strip() for method in allow.split(",")]
+    assert allow != ""
+    assert "GET" in methods
     data = response.json
 
     assert data is not None

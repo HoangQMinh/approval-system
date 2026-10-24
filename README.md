@@ -136,7 +136,7 @@ Sau khi xác nhận các thay đổi hợp lệ, commit code đã được chỉ
 
 ## Định dạng lỗi API
 
-Khi API phát sinh lỗi HTTP `404`, `405` hoặc `500`, `503` server trả về response dạng JSON với cấu trúc sau:
+Khi API phát sinh lỗi HTTP `404`, `405`, `500` hoặc `503` server trả về response dạng JSON với cấu trúc sau:
 
 ```json
 {
@@ -144,6 +144,8 @@ Khi API phát sinh lỗi HTTP `404`, `405` hoặc `500`, `503` server trả về
   "message": "The requested URL was not found on the server."
 }
 ```
+
+405 có kèm header `Allow` liệt kê method được phép.
 
 HTTP status code được trả về trong **HTTP response status line**, không nằm trong JSON body.
 
