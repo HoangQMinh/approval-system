@@ -10,7 +10,12 @@ def register_error_handlers(app: Flask) -> None:
     @app.errorhandler(HTTPException)
     def handle_http_exception(error: HTTPException) -> tuple[Response, int]:
         status = error.code if error.code is not None else 500
-        return jsonify({"error": error.name, "message": error.description}), status
+        response = jsonify({"error": error.name, "message": error.description})
+        headers = error.get_headers()
+        for name, value in headers:
+            if name.lower() != "content-type":
+                response.headers[name] = value
+        return response, status
 
     @app.errorhandler(Exception)
     def handle_unexpected_error(error: Exception) -> tuple[Response, int]:
