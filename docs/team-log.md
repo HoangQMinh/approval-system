@@ -7,15 +7,16 @@
 - **Sprint**: Sprint 0 (Setup) — bắt đầu 2026-10-06
 - **Ticket đang làm**: — (chờ 質問票 + SETUP-002)
 - **Team**: Dev A = Minh (folder `approval-system`) · Dev B = Minh (folder `approval-system-devb`) · TL/PM/QA/Ops = AI
-- **Tiến độ Sprint 0**: SETUP-001 ✅ · SETUP-004 ✅ · SETUP-003 ✅ · SETUP-002 🟡 Dev A ‖ SETUP-005 🟡 Dev B · sau đó: release Sprint 0 → QA test → retro
-- **Việc tiếp theo**: Dev A làm SETUP-002 ‖ Dev B làm SETUP-005; 002 merge trước (D-025)
+- **Tiến độ Sprint 0**: ✅ Tất cả ticket Done · ✅ Release v0.1.0 (tag → `9357e6f`) · 🔍 QA: BUG-001 · Retro chờ sau BUG-001
+- **Việc tiếp theo**: Dev A sửa BUG-001 (`fix/BUG-001`) → v0.1.1 → Retro Sprint 0 (KPT) → Sprint 1 planning
 
 ## Ticket
 | ID | Tiêu đề | Người làm | Trạng thái | 見積 (SP / giờ) | 実績 (giờ) | Ghi chú |
 |----|---------|-----------|------------|----------------|-----------|---------|
 | SETUP-001 | Dựng khung dự án: app factory, health_bp, GET /health, test, .gitignore, README | Minh | ✅ Done (2026-10-10) | 2 SP / 4h (TL ước cho người quen tay) | — | PR #1, squash `be464e7` |
-| SETUP-002 | PostgreSQL 16 bằng docker-compose + config đọc từ biến môi trường (`DATABASE_URL`, `.env.example`) | Dev A | 🟡 In Progress (2026-10-18) | 3 SP / ~8h | — | Mở sau khi SETUP-001 merge |
-| SETUP-005 | Kết nối DB bằng SQLAlchemy (`app/db.py`) + `/health` kiểm tra DB (DB chết → 503) + test | Dev B | 🟡 In Progress (2026-10-18) | 3 SP / ~8h | — | Tách từ SETUP-002; làm song song nhờ hợp đồng D-024 |
+| SETUP-002 | PostgreSQL 16 bằng docker-compose + config đọc từ biến môi trường (`DATABASE_URL`, `.env.example`) | Dev A | ✅ Done (2026-10-21, PR #4 squash `dc2f8c3`) | 3 SP / ~8h | — | Mở sau khi SETUP-001 merge |
+| SETUP-005 | Kết nối DB bằng SQLAlchemy (`app/db.py`) + `/health` kiểm tra DB (DB chết → 503) + test | Dev B | ✅ Done (2026-10-24, PR #5 squash `9357e6f`) | 3 SP / ~8h | — | Tách từ SETUP-002; làm song song nhờ hợp đồng D-024 |
+| BUG-001 | 405 thiếu header `Allow` (regression từ SETUP-003) | Dev A | 🟢 Code approved | 1 SP | — | QA phát hiện trên v0.1.0; sửa → v0.1.1 |
 | SETUP-003 | Error handler trả JSON cho 404/405/500 (hiện Flask trả HTML) | Dev A | ✅ Done (2026-10-17, PR #2 squash `830a54b`) | 2 SP / ~6h | — | Phát hiện khi review Bước 3 SETUP-001 |
 | SETUP-004 | Đưa ruff + mypy vào requirements-dev, cấu hình trong pyproject, hướng dẫn chạy trong README (PR #3, squash `dbea3b8`) | Dev B | ✅ Done (2026-10-17) | 2 SP / ~5h | — | Minh hỏi vì sao TL thấy lỗi mà máy Minh không thấy |
 
@@ -48,6 +49,12 @@
 | D-024 | **Hợp đồng giữa SETUP-002 và SETUP-005**: config key `DATABASE_URL` (dạng `postgresql+psycopg://user:pass@host:port/db`) có trong `app.config`; SETUP-005 chỉ đọc key này, test truyền qua `test_config` | Thống nhất giao diện trước → 2 dev làm song song dù có phụ thuộc |
 | D-025 | Thứ tự merge: SETUP-002 (config/DB) TRƯỚC, SETUP-005 SAU (merge main về, giải conflict). docker-compose đặt `name: approval` cố định để 2 clone dùng chung 1 container/volume; cổng máy **5433** (tránh Postgres khác đang chiếm 5432) | Nền trước; 2 clone trên 1 máy không tranh cổng |
 | D-026 | Test không cần DB thật: dùng `DATABASE_URL=sqlite+pysqlite:///:memory:` trong `test_config` (chỉ cho health `SELECT 1`); case DB chết dùng URL tới cổng đóng `127.0.0.1:1`. Test với PostgreSQL thật quyết định ở Sprint 1 (khi có bảng) | Test nhanh, không phụ thuộc Docker; chiến lược DB test thật để khi có schema |
+| D-027 | Vì TL ghi team-log trực tiếp vào clone Dev A, sau khi PR merge Dev A dọn branch theo quy trình: `git stash` → `git switch main` → `git pull` → `git stash pop` → `git branch -D ...`. Thay đổi team-log nằm chờ trên main (chưa commit) và đi theo sang branch ticket kế tiếp | Không commit lên branch đã merge/xóa; không commit thẳng main (D-006) |
+| D-028 | Sau khi merge PR có 影響範囲, TL đăng **📢 thông báo** (ngoài đời: Slack) nêu việc mỗi dev phải làm. Dev vẫn tự kiểm sau mỗi `git pull`: `git diff --stat ORIG_HEAD HEAD`, thấy đổi `requirements*.txt` / `.env.example` / `docker-compose.yml` / `pyproject.toml` thì làm bước tương ứng trong README | 3 lớp: thông báo (đẩy) + PR/README (tra cứu) + tự kiểm (thói quen); app fail-fast là lưới cuối |
+| D-029 | `DATABASE_URL` dùng **`127.0.0.1`** (không dùng `localhost`) + **`?connect_timeout=3`**; URL trong test cũng phải có `connect_timeout` (`=1`) | Windows thử IPv6 `::1` trước mà container chỉ bind IPv4 → chậm 3s/treo; psycopg mặc định chờ 130s, Windows không báo cổng đóng ngay → test 130s, curl treo |
+| D-030 | Nội dung ticket lưu ở `docs/tickets/<ID>.md` (ngoài đời: Jira). TL cập nhật file ticket ngay khi kế hoạch đổi + ghi "Lịch sử thay đổi"; chỉ commit từ clone Dev A (như D-011) | Minh không phải tìm lại ticket trong chat; tránh lỗi "kế hoạch đổi mà ticket không đổi" |
+| D-031 | Release = **tag có chú thích** `vMAJOR.MINOR.PATCH` trên `main` + **GitHub Release** (release note liệt kê PR). Sprint 0 = `v0.1.0`. Chưa có server → QA test trên đúng commit của tag | Đánh dấu chính xác "bản nào đã giao cho QA/khách"; quay lại được bản đó bất cứ lúc nào |
+| D-032 | Bug: ticket `BUG-xxx`, branch `fix/BUG-xxx`, **viết test tái hiện (đỏ) trước rồi mới sửa**; sửa xong release PATCH (`v0.1.x`). Người tạo ra đoạn code lỗi ưu tiên nhận sửa | Test đỏ trước chứng minh test bắt được bug, chống tái phát; tác giả hiểu code nhất |
 
 ## Mức hỗ trợ theo kỹ năng (D-008)
 Đầy đủ → Vừa: xong 1 ticket cùng loại, approve ≤ 2 vòng review, không xin đáp án. Vừa → Nhẹ: thêm 2 ticket cùng loại đạt mức Vừa.
@@ -62,6 +69,8 @@
 ## Bug / Sự cố
 | Ngày | Mô tả | Nguyên nhân | Xử lý | Bài học |
 |------|-------|-------------|-------|---------|
+| 2026-10-24 | TL chạy `git fetch` từ phía mình để lại `.git/objects/maintenance.lock` | Lệnh git có ghi của TL không xóa được file lock | Đổi tên thành `.git/stale-maintenance-lock`, Minh xóa tay | TL chỉ dùng lệnh git chỉ-đọc (`--no-optional-locks`), không fetch/pull từ phía TL |
+| 2026-10-24 | Dev B: `curl /health` treo, CMD Flask không in log; test 503 mất 130s | psycopg 3 timeout mặc định 130s + Windows không báo cổng đóng ngay; `localhost` → thử `::1` trước, container chỉ bind 127.0.0.1 (đo: localhost 3s, 127.0.0.1 tức thì) | D-029: URL dùng 127.0.0.1 + connect_timeout | Werkzeug in log SAU khi trả response (không log ≠ không tới); con số lạ (130s) luôn có cơ chế; health check bắt buộc có timeout |
 | 2026-10-17 | (Ghi nhận, không phải lỗi) Merge `origin/main` vào SETUP-003: conflict ở README | 2 ticket song song cùng thêm mục cuối README — TL đã dự đoán (D-018) | Giữ cả 2 mục, sắp theo thứ tự quy trình dev → tham chiếu API; commit merge chỉ chứa merge | Conflict tài liệu dễ; luôn đọc lại file Git tự merge; commit merge không lẫn sửa khác |
 | 2026-10-12 | Clone Dev A có thêm `app/pytest.ini` (untracked, giống hệt bản ở root, tạo 10-10) | `pytest.ini` bị kéo nhầm từ root vào `app/` (ngày 10-10), rồi root được `git restore` | `del app\pytest.ini` | File untracked lạ = dấu hiệu thao tác nhầm; `git add .` sẽ gom luôn |
 | 2026-10-12 | Clone Dev A: `pytest` lỗi `No module named 'app'` | `pytest.ini` bị xóa ngoài ý muốn (`git status` báo `D pytest.ini`) | `git restore pytest.ini` | Đầu mỗi ticket chạy `git status`: working tree chỉ được chứa thay đổi mình chủ ý |
@@ -77,6 +86,7 @@ Ghi chú cho retro — rút ra từ SETUP-001:
 - Chép nguyên ví dụ gợi ý → sai kiểu. Ví dụ là để hiểu cấu trúc.
 - **Lặp lại lần 3 (SETUP-002):** code đổi hành vi (`create_app` giờ raise `RuntimeError`) nhưng docstring không cập nhật — dù ticket đã nhắc. Quy tắc: đổi hành vi hàm → sửa docstring cùng lúc (Args/Returns/**Raises**).
 - **Lặp lại lần 2 (SETUP-003):** được yêu cầu *sửa* docstring lỗi thời → *xóa* luôn docstring (giống lần xóa type hint ở SETUP-001). Quy tắc: review nói "sửa X" thì X phải còn và đúng; xóa chỉ khi review nói xóa.
+- **Copy-paste mô tả PR mà không đọc lại** (PR #3 ghi SETUP-003, PR #5 chép 概要 của SETUP-002). Quy tắc: copy template thì đọc lại từng dòng trước khi bấm Create.
 - Tốt: tự phát hiện README có lệnh vô lý (`git switch`) nhờ chạy thử trên máy sạch; PR body có output thật + 異常系.
 
 ## Lịch sử phiên
@@ -115,3 +125,12 @@ Ghi chú cho retro — rút ra từ SETUP-001:
 - 2026-10-17: TL lên kế hoạch phần còn lại Sprint 0: tách SETUP-002 thành SETUP-002 (Dev A: docker-compose + config) và SETUP-005 (Dev B: kết nối DB + health), chốt D-023 (SQLAlchemy 2.0 + psycopg 3, Postgres 16 Docker), D-024 (hợp đồng `DATABASE_URL`).
 - 2026-10-18: Docker Desktop OK (lỗi đầu: Engine chưa chạy). TL giao SETUP-002 (Dev A) ‖ SETUP-005 (Dev B). Bản tham chiếu TL: 8 passed, ruff/mypy sạch, SQLAlchemy+psycopg nối thật được PostgreSQL 16, compose file hợp lệ. Dự báo conflict sau khi 002 merge: `app/__init__.py`, `tests/conftest.py` (cả 2 cùng thêm DATABASE_URL) — lần đầu conflict trong CODE.
 - 2026-10-19: Review SETUP-002 (Dev A) trước commit: đã chuyển sang branch `feature/SETUP-002` ✅, `python-dotenv==1.2.2` đã sửa và cài ✅, 7 passed, 4 tool sạch, thứ tự env → test_config → kiểm tra đúng ✅, `.env` bị ignore ✅. Điểm cộng: compose bind `127.0.0.1:5433` (DB không lộ ra LAN). Cần sửa: docstring `create_app` thiếu `Raises`; README mục "Khởi động DB" đặt cuối file (sau tham chiếu API) — phải đứng trước "Chạy ứng dụng".
+- 2026-10-19: Review PR #4 (SETUP-002, `25a9dc6`, mergeable clean): code ✅ (docstring có Raises, README đúng thứ tự, 3 commit, message đã sửa). Mô tả PR: 概要/変更内容 ghi "kết nối DB" sai (PR không kết nối DB — đó là SETUP-005), 対象外 nên ghi SETUP-005. Dev B CHƯA bắt đầu SETUP-005 → TL quyết: merge #4 trước, Dev B tạo branch từ main mới (không còn conflict dự kiến; bỏ bước tự thêm DATABASE_URL vào conftest).
+- 2026-10-21: PR #4 squash merge `dc2f8c3`. Dev A không switch được sang main vì team-log có thay đổi chưa commit (do TL ghi sau commit cuối) → chốt D-027 (dùng git stash).
+- 2026-10-21: Minh hỏi sau pull làm sao biết phải cài gì → D-028. TL đăng thông báo cho PR #4.
+- 2026-10-24: Dev B sửa test 503 đúng (app riêng). Điều tra: test 130s = timeout mặc định psycopg; giả thuyết localhost/IPv6 được Minh đo xác nhận (3s vs tức thì) → D-029.
+- 2026-10-24: Minh yêu cầu lưu ticket vào repo → tạo `docs/tickets/` (README + SETUP-001/002/003/004/005), D-030. Chưa commit — sẽ commit cùng ticket kế tiếp của Dev A.
+- 2026-10-24: Review PR #5 (SETUP-005, `7e4bd1d`): code ✅ (đủ 4 điểm sửa). Mô tả: 概要 chép nhầm từ SETUP-002 (lần 2 copy-paste sai ticket, lần 1 ở PR #3) → ghi retro.
+- 2026-10-24: PR #5 squash `9357e6f`. Cả 2 clone: main = `9357e6f`, `.env` dùng 127.0.0.1 + connect_timeout, 8 passed. **Sprint 0: hết ticket.** Chốt D-031 (release bằng tag + GitHub Release).
+- 2026-10-24: Release v0.1.0 (tag annotated → `9357e6f`, GitHub Release có note PR #1–#5). QA test hộp đen trên v0.1.0 → BUG-001 (405 thiếu Allow, regression từ SETUP-003; bằng chứng: output curl trong PR #1 vs PR #2). Chốt D-032.
+- 2026-10-25: Review BUG-001 trước commit: ✅ — sửa đúng (chép header trừ Content-Type), test 405 kiểm Allow, mutation xác nhận test bắt được bug; 8 passed, 4 tool sạch. Test 404 cũng được thêm guard None (đồng nhất 3 test).
