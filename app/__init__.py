@@ -8,6 +8,7 @@ def create_app(test_config: dict | None = None) -> Flask:
 
     Đọc cấu hình mặc định từ biến môi trường, sau đó áp dụng
     test_config nếu được cung cấp.
+    Tạo engine từ DATABASE_URL và gắn vào app.
 
     Args:
         test_config: Cấu hình ghi đè cấu hình đọc từ biến môi trường,
@@ -34,6 +35,10 @@ def create_app(test_config: dict | None = None) -> Flask:
         raise RuntimeError(
             "DATABASE_URL is missing. Please set DATABASE_URL in your .env file."
         )
+
+    from app.db import init_db
+
+    init_db(app)
 
     from app.routes.health import health_bp
 
