@@ -6,7 +6,8 @@ Hệ thống xét duyệt đơn nghỉ phép, chi phí của nhân viên lên c�
 
 ## Yêu cầu môi trường
 
-Python 3.12+
+- Python 3.12+
+- Docker Desktop
 
 ## Cài đặt
 
@@ -38,6 +39,9 @@ Thực hiện bước này trước khi chạy ứng dụng hoặc các lệnh k
 ```cmd
 copy .env.example .env
 ```
+
+- `DATABASE_URL` có thêm timeout kết nối 3 giây. Người đã có .env cũ phải tự thêm, sửa xong phải khởi động lại Flask
+- `DATABASE_URL` dùng 127.0.0.1 thay vì localhost vì windows có thể localhost thử IPv6 trước nên sẽ chậm hơn
 
 ### 2. Khởi động PostgreSQL
 
@@ -81,11 +85,12 @@ Lệnh này dừng và xóa container/network do Compose quản lý, nhưng **gi
 flask --app app run --debug
 ```
 
-**CMD 2 — Mở một CMD khác để gọi API:**
+**CMD 2 — Mở một CMD khác để gọi API và kiểm tra DB:**
 
 ```cmd
 curl -i http://127.0.0.1:5000/health
 ```
+DB tắt sẽ trả về lỗi 503
 
 ## Chạy test
 
@@ -131,7 +136,7 @@ Sau khi xác nhận các thay đổi hợp lệ, commit code đã được chỉ
 
 ## Định dạng lỗi API
 
-Khi API phát sinh lỗi HTTP `404`, `405` hoặc `500`, server trả về response dạng JSON với cấu trúc sau:
+Khi API phát sinh lỗi HTTP `404`, `405` hoặc `500`, `503` server trả về response dạng JSON với cấu trúc sau:
 
 ```json
 {
@@ -171,6 +176,7 @@ Nội dung `message` thực tế phụ thuộc vào lỗi và cấu hình của 
 | `404 Not Found` | URL hoặc tài nguyên được yêu cầu không tồn tại. |
 | `405 Method Not Allowed` | HTTP method không được hỗ trợ bởi endpoint. |
 | `500 Internal Server Error` | Xảy ra lỗi không mong đợi trong server. |
+| `503 Service Unavailable` | Xảy ra lỗi không kết nối được với database. |
 
 Các lỗi trên được trả về theo cùng cấu trúc JSON:
 
