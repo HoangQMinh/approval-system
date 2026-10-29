@@ -186,3 +186,10 @@ Các lỗi trên được trả về theo cùng cấu trúc JSON:
 - `message`: mô tả lỗi.
 
 **Lưu ý bảo mật:** Với lỗi `500`, response không cung cấp chi tiết exception nội bộ, thông tin database, đường dẫn file hoặc stack trace. Chi tiết lỗi được ghi log ở phía server để phục vụ debug.
+
+## Quy trình phát triển
+
+- Quy trình Git và coding chi tiết: xem [CONTRIBUTING.md](CONTRIBUTING.md).
+- Khi tạo Pull Request, sử dụng PR template có sẵn.
+- Trước khi mở PR, chạy đầy đủ 3 công cụ ở mục 4 của CONTRIBUTING.md.
+- Chỉ mở PR khi các kiểm tra hoàn tất và đạt yêu cầu.
