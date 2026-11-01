@@ -64,7 +64,7 @@ class LeaveRequest(Base):
 
 class ApprovalHistory(Base):
     __tablename__ = "approval_histories"
-    __table_args__ = CheckConstraint(_in("action", ACTIONS), name="ck_action")
+    __table_args__ = (CheckConstraint(_in("action", ACTIONS), name="ck_action"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     leave_request_id: Mapped[int] = mapped_column(ForeignKey("leave_requests.id"))
