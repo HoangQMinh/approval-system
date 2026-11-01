@@ -1,5 +1,7 @@
 # approval-system
 
+![CI](https://github.com/HoangQMinh/approval-system/actions/workflows/ci.yml/badge.svg)
+
 ## Tổng quan
 
 Hệ thống xét duyệt đơn nghỉ phép, chi phí của nhân viên lên cấp trên phê duyệt, xử lý.
@@ -114,6 +116,8 @@ mypy
 
 Nếu có lỗi, sửa code hoặc chạy các lệnh tự động sửa phù hợp, sau đó chạy lại cả 3 lệnh để xác nhận kết quả.
 
+Trên GitHub, CI (`.github/workflows/ci.yml`) tự chạy 3 lệnh này cùng `pytest` cho mọi PR và mỗi lần push lên `main`. PR có CI đỏ không merge được.
+
 ### Sửa lỗi và định dạng code
 
 Nếu Ruff báo lỗi hoặc code chưa đúng định dạng, chạy:
@@ -191,5 +195,5 @@ Các lỗi trên được trả về theo cùng cấu trúc JSON:
 
 - Quy trình Git và coding chi tiết: xem [CONTRIBUTING.md](CONTRIBUTING.md).
 - Khi tạo Pull Request, sử dụng PR template có sẵn.
-- Trước khi mở PR, chạy đầy đủ 3 công cụ ở mục 4 của CONTRIBUTING.md.
+- Trước khi mở PR, chạy các lệnh kiểm tra ở mục 4 của CONTRIBUTING.md (lint, format, type check, test).
 - Chỉ mở PR khi các kiểm tra hoàn tất và đạt yêu cầu.
