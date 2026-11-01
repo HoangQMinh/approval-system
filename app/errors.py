@@ -1,5 +1,6 @@
 """Error handlers: trả lỗi dạng JSON thống nhất cho toàn bộ API."""
 
+import sys
 from flask import Flask, Response, jsonify
 from werkzeug.exceptions import HTTPException
 
