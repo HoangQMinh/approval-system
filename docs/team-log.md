@@ -4,11 +4,11 @@
 > TL (AI) duy trì file này; Intern commit nó cùng PR.
 
 ## Trạng thái hiện tại
-- **Sprint**: Sprint 0 (Setup) — bắt đầu 2026-10-06
-- **Ticket đang làm**: — (chờ 質問票 + SETUP-002)
+- **Sprint**: Sprint 1 (2026-10-26 → 11-06) — mục tiêu: tạo đơn (có kiểm tra hợp lệ) + xem đơn của mình; CI trên mọi PR. Kế hoạch: `docs/sprints/sprint1.md`
+- **Ticket đang làm**: Dev A: LEAVE-001 · Dev B: LEAVE-002 (giao sớm; Bước 1 trước, phần còn lại sau khi LEAVE-001 merge) · merge: LEAVE-001 → LEAVE-002
 - **Team**: Dev A = Minh (folder `approval-system`) · Dev B = Minh (folder `approval-system-devb`) · TL/PM/QA/Ops = AI
-- **Tiến độ Sprint 0**: ✅ Tất cả ticket Done · ✅ Release v0.1.0 (tag → `9357e6f`) · 🔍 QA: BUG-001 · Retro chờ sau BUG-001
-- **Việc tiếp theo**: Dev A sửa BUG-001 (`fix/BUG-001`) → v0.1.1 → Retro Sprint 0 (KPT) → Sprint 1 planning
+- **Tiến độ Sprint 0**: ✅ ĐÓNG (2026-10-25) — 5 ticket + BUG-001, release v0.1.0 / v0.1.1, retro xong
+- **Việc tiếp theo**: Dev A pull `db6d78e` → `feature/LEAVE-001` · Dev B tạo `feature/LEAVE-002`, làm Bước 1 (session theo request)
 
 ## Ticket
 | ID | Tiêu đề | Người làm | Trạng thái | 見積 (SP / giờ) | 実績 (giờ) | Ghi chú |
@@ -16,7 +16,11 @@
 | SETUP-001 | Dựng khung dự án: app factory, health_bp, GET /health, test, .gitignore, README | Minh | ✅ Done (2026-10-10) | 2 SP / 4h (TL ước cho người quen tay) | — | PR #1, squash `be464e7` |
 | SETUP-002 | PostgreSQL 16 bằng docker-compose + config đọc từ biến môi trường (`DATABASE_URL`, `.env.example`) | Dev A | ✅ Done (2026-10-21, PR #4 squash `dc2f8c3`) | 3 SP / ~8h | — | Mở sau khi SETUP-001 merge |
 | SETUP-005 | Kết nối DB bằng SQLAlchemy (`app/db.py`) + `/health` kiểm tra DB (DB chết → 503) + test | Dev B | ✅ Done (2026-10-24, PR #5 squash `9357e6f`) | 3 SP / ~8h | — | Tách từ SETUP-002; làm song song nhờ hợp đồng D-024 |
-| BUG-001 | 405 thiếu header `Allow` (regression từ SETUP-003) | Dev A | 🟢 Code approved | 1 SP | — | QA phát hiện trên v0.1.0; sửa → v0.1.1 |
+| SETUP-006 | PR template + checklist (Try T1, T3) | Dev B | ✅ Done (#7, `bd2c066`) | 1 SP | — | Sprint 1 đợt 1 |
+| SETUP-007 | CI GitHub Actions (Try T2) | TL ([Thay TL] Minh thao tác Git) | ✅ Done (#8, `db6d78e`) | 2 SP | — | Sprint 1 đợt 1 |
+| LEAVE-002 | X-User-Id → 401, `g.current_user`, `GET /me`, session theo request | Dev B | 🟡 Assigned (2026-11-01) | 2 SP | — | Bước 1 làm ngay; Bước 2+ sau LEAVE-001 merge |
+| LEAVE-001 | Model 3 bảng + init-db + seed-users | Dev A | 🟡 In Review (Draft PR #9) | 3 SP | — | Sprint 1 đợt 1; Draft, merge sau 007 |
+| BUG-001 | 405 thiếu header `Allow` (regression từ SETUP-003) | Dev A | ✅ Closed (2026-10-25, PR #6 `5a9e681`, v0.1.1, QA retest OK) | 1 SP | — | QA phát hiện trên v0.1.0 |
 | SETUP-003 | Error handler trả JSON cho 404/405/500 (hiện Flask trả HTML) | Dev A | ✅ Done (2026-10-17, PR #2 squash `830a54b`) | 2 SP / ~6h | — | Phát hiện khi review Bước 3 SETUP-001 |
 | SETUP-004 | Đưa ruff + mypy vào requirements-dev, cấu hình trong pyproject, hướng dẫn chạy trong README (PR #3, squash `dbea3b8`) | Dev B | ✅ Done (2026-10-17) | 2 SP / ~5h | — | Minh hỏi vì sao TL thấy lỗi mà máy Minh không thấy |
 
@@ -55,6 +59,20 @@
 | D-030 | Nội dung ticket lưu ở `docs/tickets/<ID>.md` (ngoài đời: Jira). TL cập nhật file ticket ngay khi kế hoạch đổi + ghi "Lịch sử thay đổi"; chỉ commit từ clone Dev A (như D-011) | Minh không phải tìm lại ticket trong chat; tránh lỗi "kế hoạch đổi mà ticket không đổi" |
 | D-031 | Release = **tag có chú thích** `vMAJOR.MINOR.PATCH` trên `main` + **GitHub Release** (release note liệt kê PR). Sprint 0 = `v0.1.0`. Chưa có server → QA test trên đúng commit của tag | Đánh dấu chính xác "bản nào đã giao cho QA/khách"; quay lại được bản đó bất cứ lúc nào |
 | D-032 | Bug: ticket `BUG-xxx`, branch `fix/BUG-xxx`, **viết test tái hiện (đỏ) trước rồi mới sửa**; sửa xong release PATCH (`v0.1.x`). Người tạo ra đoạn code lỗi ưu tiên nhận sửa | Test đỏ trước chứng minh test bắt được bug, chống tái phát; tác giả hiểu code nhất |
+| D-033 | Phân vai dev/TL theo `docs/roles.md`; việc TL nhờ Minh thao tác ghi **[Thay TL]**; câu hỏi của dev gửi với tiền tố ❓ trước khi code | Từ retro Sprint 0 (Problem + Try của Minh) |
+| D-034 | **Xác thực tạm thời** bằng header `X-User-Id` (users.id); thiếu/sai → 401. Chỉ cho dev, thay bằng đăng nhập thật ở sprint sau | 質問票 No.15 (簡易認証); tập trung vào nghiệp vụ trước |
+| D-035 | Tạo bảng bằng `flask init-db` (`create_all`) cho tới ticket migration (Alembic). Đổi model → xóa bảng/volume dev và tạo lại | Migration nằm sau trong lộ trình; chưa có dữ liệu thật |
+| D-036 | Giá trị mã lưu tiếng Anh (`annual_paid`, `pending`...) + CHECK constraint; nhãn tiếng Nhật chỉ ở tài liệu/hiển thị | Mã ổn định, không phụ thuộc ngôn ngữ; DB tự chặn giá trị sai |
+| D-037 | Mã lỗi API: 400 (kèm `details`), 401, 403, 404, 409 — xem `docs/design/api.md` | Client xử lý thống nhất |
+| D-038 | Hợp đồng LEAVE-002 ↔ LEAVE-003/005: user đã xác thực nằm ở `g.current_user` (đối tượng `User`) | Cho phép làm song song như D-024 |
+| D-008b | (bổ sung D-008) Minh chọn **giữ Phần học dài, chi tiết** cho mọi ticket (skeleton TODO, bảng cú pháp, mapping OutSystems, README note từng bước, DoD). Thang "Đầy đủ → Vừa → Nhẹ" vẫn ghi nhận năng lực nhưng **không tự cắt nội dung**; chỉ rút gọn khi Minh yêu cầu | Minh muốn học kỹ; đã biết ticket thật ngoài đời ngắn hơn nhiều (ví dụ đã xem) |
+| D-039 | Thao tác Git chuẩn cho mỗi ticket viết ở `CONTRIBUTING.md` (root); README chỉ có mục ngắn trỏ tới đó. Làm trong SETUP-006 (Dev B) | Minh đề xuất; tránh lệnh git nằm rải rác ở chat/team-log; README giữ vai trò cài đặt/chạy; GitHub tự hiện link CONTRIBUTING khi mở PR |
+| D-040 | Chỉ bấm **Squash and merge** sau khi TL ghi **"✅ Approve PR #N"** trong chat, và commit cuối trên PR trùng với commit TL đã xem | 1 tài khoản GitHub nên không dùng được nút Approve; PR #7 merge khi bản sửa README chưa push |
+| D-041 | Hạ tầng dùng chung (CI, ruleset/required check, sau này Docker image/deploy) do **TL** làm; dev chỉ sửa/thêm bước khi đã có sẵn. Thứ tự học vẫn theo quy tắc 7 (… → Docker → CI) | Minh góp ý đúng: SETUP-007 giao intern là nhảy cóc quy tắc 7; CI là quyết định kỹ thuật toàn team |
+| D-042 | Code trong request lấy DB qua `get_session()` (`app/db.py`): 1 request = 1 `Session` lưu ở `g`, đóng ở `teardown_appcontext`. Lệnh CLI vẫn `with Session(get_engine())` | Không mở/đóng session rải rác; LEAVE-003/005 dùng chung; tương đương transaction-per-request của OutSystems |
+| D-043 | Thêm `GET /me` (LEAVE-002). 401 có 2 message cố định: thiếu header / `Invalid X-User-Id.` (không phân biệt sai định dạng và không tồn tại); chỉ nhận chữ số ASCII | Có endpoint để thử xác thực trước khi có API đơn; tránh dò ID; chặn số toàn góc (`int("１") == 1`) |
+| D-044 | Giữ `ruff format` kiểm cả khối code Python trong file `.md` (ruff 0.17 làm mặc định), **không** exclude `docs/`. TL chạy `ruff format --check docs` trước khi giao ticket | Code mẫu trong ticket cũng phải đúng PEP 8 vì dev chép theo (quy tắc 4); nếu exclude thì skeleton sai format cũng không ai biết |
+| D-026b | (bổ sung D-026) Sprint 1 vẫn test trên SQLite in-memory (kể cả bảng); lưu ý SQLite không kiểm FK. Chuyển test sang PostgreSQL khi dùng tính năng riêng của PostgreSQL | Đơn giản, CI không cần DB; rủi ro đã biết |
 
 ## Mức hỗ trợ theo kỹ năng (D-008)
 Đầy đủ → Vừa: xong 1 ticket cùng loại, approve ≤ 2 vòng review, không xin đáp án. Vừa → Nhẹ: thêm 2 ticket cùng loại đạt mức Vừa.
@@ -69,6 +87,8 @@
 ## Bug / Sự cố
 | Ngày | Mô tả | Nguyên nhân | Xử lý | Bài học |
 |------|-------|-------------|-------|---------|
+| 2026-10-30 | PR #7 merge khi còn 1 điểm 🔴 (README "3 công cụ") | Bản sửa chưa commit/push; merge trước khi TL approve lại | Sửa trong SETUP-007 (thêm AC) | D-040: merge chỉ sau "✅ Approve" của TL; trước merge xem tab Commits có commit sửa chưa |
+| 2026-10-25 | BUG-001: commit "Keep exception headers" không chứa `app/errors.py` (HEAD 1 test đỏ) | Quên `git stash pop` sau bước chứng minh test đỏ | Trước khi push: `stash pop` → `git reset 74600a3` → commit lại | Sau stash luôn `git stash list` (phải trống); TL kiểm từng commit, không chỉ trạng thái cuối; reset chỉ cho commit chưa push |
 | 2026-10-24 | TL chạy `git fetch` từ phía mình để lại `.git/objects/maintenance.lock` | Lệnh git có ghi của TL không xóa được file lock | Đổi tên thành `.git/stale-maintenance-lock`, Minh xóa tay | TL chỉ dùng lệnh git chỉ-đọc (`--no-optional-locks`), không fetch/pull từ phía TL |
 | 2026-10-24 | Dev B: `curl /health` treo, CMD Flask không in log; test 503 mất 130s | psycopg 3 timeout mặc định 130s + Windows không báo cổng đóng ngay; `localhost` → thử `::1` trước, container chỉ bind 127.0.0.1 (đo: localhost 3s, 127.0.0.1 tức thì) | D-029: URL dùng 127.0.0.1 + connect_timeout | Werkzeug in log SAU khi trả response (không log ≠ không tới); con số lạ (130s) luôn có cơ chế; health check bắt buộc có timeout |
 | 2026-10-17 | (Ghi nhận, không phải lỗi) Merge `origin/main` vào SETUP-003: conflict ở README | 2 ticket song song cùng thêm mục cuối README — TL đã dự đoán (D-018) | Giữ cả 2 mục, sắp theo thứ tự quy trình dev → tham chiếu API; commit merge chỉ chứa merge | Conflict tài liệu dễ; luôn đọc lại file Git tự merge; commit merge không lẫn sửa khác |
@@ -78,16 +98,32 @@
 | 2026-10-07 | TL chạy `git status` từ máy khác để lại `.git/index.lock` | `git status` ghi lock để refresh index; tiến trình không xóa được lock | Đổi tên thành `index.lock.bak`, Minh xóa tay | Tool đọc repo nên dùng `git --no-optional-locks status`; gặp lỗi `index.lock: File exists` → kiểm tra không có git nào đang chạy rồi xóa file lock |
 
 ## Retro
-_(retro chính thức khi đóng Sprint 0)_
 
-Ghi chú cho retro — rút ra từ SETUP-001:
-- Sửa theo review bằng trí nhớ → sót điểm. Cách làm: dò lại từng gạch đầu dòng trước khi báo "xong".
-- Gặp lỗi type hint thì xóa type hint → né lỗi chứ không sửa. Cách làm: đọc dòng `got ...` của công cụ.
-- Chép nguyên ví dụ gợi ý → sai kiểu. Ví dụ là để hiểu cấu trúc.
-- **Lặp lại lần 3 (SETUP-002):** code đổi hành vi (`create_app` giờ raise `RuntimeError`) nhưng docstring không cập nhật — dù ticket đã nhắc. Quy tắc: đổi hành vi hàm → sửa docstring cùng lúc (Args/Returns/**Raises**).
-- **Lặp lại lần 2 (SETUP-003):** được yêu cầu *sửa* docstring lỗi thời → *xóa* luôn docstring (giống lần xóa type hint ở SETUP-001). Quy tắc: review nói "sửa X" thì X phải còn và đúng; xóa chỉ khi review nói xóa.
-- **Copy-paste mô tả PR mà không đọc lại** (PR #3 ghi SETUP-003, PR #5 chép 概要 của SETUP-002). Quy tắc: copy template thì đọc lại từng dòng trước khi bấm Create.
-- Tốt: tự phát hiện README có lệnh vô lý (`git switch`) nhờ chạy thử trên máy sạch; PR body có output thật + 異常系.
+### Sprint 0 (2026-10-25) — KPT
+
+**Keep**
+- (Minh) TL review lại trước khi PR.
+- (Minh) Ticket để trong source code (`docs/tickets/`) dễ theo dõi.
+- (TL) PR body có output thật + 異常系; mutation test / test đỏ trước khi sửa; chạy README trên máy sạch; tách commit máy làm và người làm; điều tra sự cố bằng đo đạc.
+
+**Problem**
+- (Minh) Đôi lúc nhầm việc của dev và TL.
+- (TL) Tài liệu không theo kịp code (docstring, README, `.env.example`, PR body) — lặp 3–4 lần.
+- (TL) Copy mô tả PR không đọc lại (PR #3, #5).
+- (TL) Xóa thay vì sửa (type hint, docstring).
+- (TL) Sơ suất Git: code trên main, quên `stash pop`, nhầm commit/push.
+- (TL) Gõ tay requirements sai (`=`, `psyscopg`).
+- (TL, lỗi của TL) Ticket không cập nhật khi kế hoạch đổi; review không so output trước/sau → lọt BUG-001; lệnh git của TL để lại file lock; đoán hành vi Windows không kiểm chứng.
+
+**Try → hành động**
+| # | Try | Hành động cụ thể | Kiểm tra ở retro Sprint 1 |
+|---|-----|------------------|---------------------------|
+| T1 | PR template có checklist tài liệu | Ticket **SETUP-006**: `.github/pull_request_template.md` — ✅ #7 | PR Sprint 1 không còn ghi nhầm ticket / quên cập nhật tài liệu? |
+| T2 | CI kiểm môi trường sạch + 4 công cụ | Ticket **SETUP-007**: GitHub Actions (cài từ requirements, ruff, mypy, pytest) — ✅ #8 + required check `check` | Lỗi requirements / commit đỏ có bị CI chặn? |
+| T3 | Sau `git stash` luôn `git stash list` | Thêm vào checklist trong PR template (SETUP-006) | Không còn commit thiếu code |
+| T4 | Reviewer so output trước/sau với thay đổi hành vi chung | Quy tắc cho TL khi review | Không có regression lọt qua review |
+| T5 | (Minh) Hỏi lại chỗ chưa rõ | Hỏi trong chat với tiền tố ❓ **trước khi code**; TL trả lời và sửa file ticket | Số lần làm lại vì hiểu sai ticket |
+| T6 | (cho Problem của Minh) Rõ vai dev/TL | `docs/roles.md` + ghi **[Thay TL]** cho việc TL nhờ Minh thao tác | Minh còn nhầm vai không |
 
 ## Lịch sử phiên
 - 2026-10-06: Workspace trống → TL giao lại SETUP-001. Minh kết nối folder `Desktop\PJ\approval-system`; TL review trực tiếp từ folder.
@@ -134,3 +170,15 @@ Ghi chú cho retro — rút ra từ SETUP-001:
 - 2026-10-24: PR #5 squash `9357e6f`. Cả 2 clone: main = `9357e6f`, `.env` dùng 127.0.0.1 + connect_timeout, 8 passed. **Sprint 0: hết ticket.** Chốt D-031 (release bằng tag + GitHub Release).
 - 2026-10-24: Release v0.1.0 (tag annotated → `9357e6f`, GitHub Release có note PR #1–#5). QA test hộp đen trên v0.1.0 → BUG-001 (405 thiếu Allow, regression từ SETUP-003; bằng chứng: output curl trong PR #1 vs PR #2). Chốt D-032.
 - 2026-10-25: Review BUG-001 trước commit: ✅ — sửa đúng (chép header trừ Content-Type), test 405 kiểm Allow, mutation xác nhận test bắt được bug; 8 passed, 4 tool sạch. Test 404 cũng được thêm guard None (đồng nhất 3 test).
+- 2026-10-25: BUG-001 commit lại đúng: `74600a3` (test, 1 đỏ) → `ba6cb6f` (errors.py + README, 8 xanh) → `8475094` (docs). Sẵn sàng push/PR.
+- 2026-10-25: Release v0.1.1 (tag → `5a9e681`, Previous tag v0.1.0, note chỉ có #6). QA retest đạt → BUG-001 Closed. Bắt đầu retro Sprint 0.
+- 2026-10-25: Retro Sprint 0 (KPT) xong — Minh góp 2 Keep / 1 Problem / 1 Try. Tạo `docs/roles.md`, chốt D-033, Try T1–T6. **Sprint 0 đóng.**
+- 2026-10-25: **Sprint 1 planning**: TL viết `docs/design/` (状態遷移, テーブル定義, API一覧), `docs/sprints/sprint1.md` (16 SP, 7 ticket, 3 đợt), ticket đợt 1 (SETUP-006, SETUP-007, LEAVE-001). Bản tham chiếu LEAVE-001 chạy thật trên PostgreSQL 16 + test SQLite (11 passed). Chốt D-034…D-038, D-026b. Trả lời PM: Sprint 1 giao 申請・照会, 承認・差戻し ở Sprint 2.
+- 2026-10-27: Minh hỏi ticket thật có dài vậy không → TL cho xem ví dụ ticket thật ngắn; Minh chọn giữ ticket dài như hiện tại → D-008b.
+- 2026-10-28: Minh đề xuất ghi thao tác Git khi làm task mới → TL bổ sung vào SETUP-006 (`CONTRIBUTING.md` + mục ngắn trong README), D-039. Phát hiện: clone Dev B vẫn ở `9357e6f` (chưa pull v0.1.1) → cần pull trước khi tạo branch.
+- 2026-10-30: PR #7 (SETUP-006) merge → `bd2c066`. Phát hiện merge khi còn 🔴 README → chuyển sửa sang SETUP-007, chốt D-040. Giao SETUP-007 cho Dev B.
+- 2026-11-01: Minh góp ý SETUP-007 nên do TL làm → đồng ý (D-041). TL viết `ci.yml` + sửa README trong clone Dev B (đang ở `feature/SETUP-007`, `bd2c066`). Ghi nhận: dòng "3 công cụ" của Dev B có lý do — README mục Kiểm tra code liệt kê 3 lệnh (pytest ở mục Chạy test).
+- 2026-11-01: PR #8 (SETUP-007) merge → `db6d78e`; CI push trên main ✅; required check `check` đã bật (kiểm qua API rules). Dev B đã dọn branch (main `db6d78e`, stash trống). Giao LEAVE-002 cho Dev B (bản tham chiếu TL: 20 passed). Chốt D-042, D-043. Chưa xác nhận: template có tự điền ở PR #8 không.
+- 2026-11-01: Minh xác nhận PR #8 tự điền template (SETUP-006 DoD đủ). Dev A bắt đầu LEAVE-001.
+- 2026-11-01: Dev A phát hiện `ruff format --check .` báo `docs/tickets/LEAVE-002.md` (khối ví dụ `timed` căn comment bằng nhiều dấu cách). Lỗi của TL → đã sửa, docs/ + CONTRIBUTING + README kiểm lại sạch. Chốt D-044.
+- 2026-11-05: Review LEAVE-001 Bước 2 (`d3fad17`, `e556f8e` đã push, CI ✅) + Bước 3 (`tests/test_models.py` chưa commit): TL chạy trên clone sạch → 11 passed, 4 lệnh sạch; mutation bỏ `ck_half_day` → test đỏ ✅. Còn thiếu: bằng chứng chạy trên PostgreSQL trong PR body. Lần đầu bắt lỗi nhờ Draft PR: `__table_args__` không phải tuple (CI xanh vì chưa có test import models).

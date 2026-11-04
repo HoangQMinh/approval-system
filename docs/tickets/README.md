@@ -10,7 +10,12 @@
 | [SETUP-004](SETUP-004.md) | 静的解析ツール（ruff / mypy）導入 | Dev B | ✅ Done | #3 |
 | [SETUP-002](SETUP-002.md) | DB環境構築・環境変数による設定読み込み | Dev A | ✅ Done | #4 |
 | [SETUP-005](SETUP-005.md) | DB接続処理の実装・ヘルスチェックへのDB確認追加 | Dev B | ✅ Done | #5 |
-| [BUG-001](BUG-001.md) | 405 レスポンスに Allow ヘッダーが含まれない | Dev A | 🟢 Approved | — |
+| [BUG-001](BUG-001.md) | 405 レスポンスに Allow ヘッダーが含まれない | Dev A | ✅ Closed | #6 |
+| **Sprint 1** | | | | |
+| [SETUP-006](SETUP-006.md) | プルリクエストテンプレート導入 | Dev B | ✅ Done | #7 |
+| [SETUP-007](SETUP-007.md) | CI（GitHub Actions）導入 | TL | ✅ Done | #8 |
+| [LEAVE-001](LEAVE-001.md) | 休暇申請テーブル作成 | Dev A | 🟡 Assigned | — |
+| [LEAVE-002](LEAVE-002.md) | 簡易認証（X-User-Id）・ログインユーザー取得 API | Dev B | 🟡 Assigned | — |
 
 ## Quy ước file ticket
 - Phần **Ticket** (tiếng Nhật, format Jira) = những gì ngoài đời ticket thật có.

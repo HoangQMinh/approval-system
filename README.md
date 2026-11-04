@@ -79,6 +79,38 @@ Lệnh này dừng và xóa container/network do Compose quản lý, nhưng **gi
 
 **Lưu ý:** Không chạy `docker compose down -v` trừ khi muốn xóa cả volume chứa dữ liệu PostgreSQL. Dữ liệu database sẽ bị mất.
 
+### 5. Khởi tạo bảng và dữ liệu mẫu
+
+Tạo các bảng từ SQLAlchemy models:
+
+```cmd
+flask --app app init-db
+```
+
+Nạp dữ liệu User mẫu:
+
+```cmd
+flask --app app seed-users
+```
+
+Lệnh `seed-users` sẽ bỏ qua những User đã tồn tại (`employee_code` đã được sử dụng).
+
+**Lưu ý:**
+
+- Hiện tại project chưa sử dụng database migration (Alembic/Flask-Migrate).
+- `flask init-db` chỉ tạo các bảng chưa tồn tại, không tự động cập nhật schema khi model thay đổi.
+- Khi thay đổi model làm thay đổi cấu trúc database, cần xóa database cũ và khởi tạo lại.
+- Với PostgreSQL chạy bằng Docker Compose, có thể xóa volume và tạo lại database:
+
+```cmd
+docker compose down -v
+docker compose up -d
+flask --app app init-db
+flask --app app seed-users
+```
+
+**Cảnh báo:** `docker compose down -v` sẽ xóa volume và toàn bộ dữ liệu PostgreSQL hiện có. Chỉ sử dụng trong môi trường development khi có thể tạo lại dữ liệu.
+
 ## Chạy ứng dụng
 
 **CMD 1 — Khởi động server:**
@@ -157,7 +189,7 @@ HTTP status code được trả về trong **HTTP response status line**, không
 
 Ví dụ gọi một URL không tồn tại:
 
-```bash
+```cmd
 curl -i http://127.0.0.1:5000/not-found
 ```
 
